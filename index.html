@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>JSON Diff</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="brand">
+        <h1>JSON Diff</h1>
+        <p class="tagline">Compare two JSON documents and see semantic differences.</p>
+      </div>
+      <div class="hero-note">
+        <p>Validate, format, and compare two JSON documents. Differences are shown inline.</p>
+        <div class="ad-slot">Ad space</div>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <h2>Left JSON</h2>
+          </div>
+          <div class="panel-actions">
+            <label class="file-btn">
+              Upload
+              <input type="file" id="file-left" accept="application/json" />
+            </label>
+            <button id="download-left" class="ghost">Download</button>
+            <button id="copy-left" class="ghost">Copy</button>
+            <button id="clear-left" class="ghost">Clear</button>
+          </div>
+        </div>
+        <div class="editor" id="editor-left">
+          <div class="line-numbers" id="lines-left"></div>
+          <div class="code-pane">
+            <pre id="view-left" class="json-highlight"></pre>
+            <textarea id="json-left" placeholder="Paste JSON or upload a file"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <h2>Right JSON</h2>
+          </div>
+          <div class="panel-actions">
+            <label class="file-btn">
+              Upload
+              <input type="file" id="file-right" accept="application/json" />
+            </label>
+            <button id="download-right" class="ghost">Download</button>
+            <button id="copy-right" class="ghost">Copy</button>
+            <button id="clear-right" class="ghost">Clear</button>
+          </div>
+        </div>
+        <div class="editor" id="editor-right">
+          <div class="line-numbers" id="lines-right"></div>
+          <div class="code-pane">
+            <pre id="view-right" class="json-highlight"></pre>
+            <textarea id="json-right" placeholder="Paste JSON or upload a file"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel center-panel">
+        <div class="compare-actions">
+          <button id="compare" class="primary">Compare</button>
+          <button id="sync-toggle" class="ghost">Sync Scroll: Off</button>
+          <button id="format" class="ghost">Format</button>
+          <button id="sample" class="ghost">Sample</button>
+          <div id="compare-status" class="status-card neutral">
+            <div id="status-title" class="status-title">Enter two JSON documents to compare.</div>
+            <details id="status-details" class="status-details">
+              <summary>Details</summary>
+              <div id="status-body" class="status-body"></div>
+            </details>
+          </div>
+        </div>
+        <div class="ad-slot tall">Ad space</div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="ad-slot">Ad space</div>
+      <p>All comparisons happen in your browser.</p>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
