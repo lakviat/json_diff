@@ -29,6 +29,7 @@
       name="twitter:description"
       content="Compare two JSON documents online for free. Paste or upload JSON files and see differences instantly."
     />
+    <meta name="google-adsense-account" content="ca-pub-REPLACE_ME" />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <script type="application/ld+json">
       {
@@ -54,11 +55,42 @@
       </div>
       <div class="hero-note">
         <p>Validate, format, and compare two JSON documents. Differences are shown inline.</p>
-        <div class="ad-slot" id="ad-top" data-ad-slot="top">Ad space</div>
       </div>
     </header>
 
     <main class="content">
+      <section class="top-row">
+        <div class="actions-shell">
+      <section class="actions-bar">
+        <div class="action-buttons">
+          <button id="sample" class="ghost">Sample</button>
+          <button id="sync-toggle" class="ghost">Sync Scroll: Off</button>
+          <button id="format" class="ghost">Format</button>
+          <button id="compare" class="primary">Compare</button>
+          <div id="compare-status" class="status-card neutral">
+            <div id="status-title" class="status-title">Enter two JSON documents to compare.</div>
+            <details id="status-details" class="status-details">
+              <summary>Details</summary>
+              <div id="status-body" class="status-body"></div>
+            </details>
+          </div>
+        </div>
+      </section>
+        </div>
+        <div class="ad-top-wrap">
+          <div class="ad-slot ad-top" id="ad-top" data-ad-slot="top">
+            <ins
+              class="adsbygoogle"
+              data-ad-client="ca-pub-REPLACE_ME"
+              data-ad-slot="REPLACE_TOP_SLOT"
+              data-ad-format="auto"
+              data-full-width-responsive="true"
+            ></ins>
+            <span class="ad-placeholder">Ad space</span>
+          </div>
+        </div>
+      </section>
+
       <section class="panel">
         <div class="panel-header">
           <div class="panel-title">
@@ -106,27 +138,9 @@
           </div>
         </div>
       </section>
-
-      <section class="panel center-panel">
-        <div class="compare-actions">
-          <button id="compare" class="primary">Compare</button>
-          <button id="sync-toggle" class="ghost">Sync Scroll: Off</button>
-          <button id="format" class="ghost">Format</button>
-          <button id="sample" class="ghost">Sample</button>
-          <div id="compare-status" class="status-card neutral">
-            <div id="status-title" class="status-title">Enter two JSON documents to compare.</div>
-            <details id="status-details" class="status-details">
-              <summary>Details</summary>
-              <div id="status-body" class="status-body"></div>
-            </details>
-          </div>
-        </div>
-        <div class="ad-slot tall" id="ad-side" data-ad-slot="side">Ad space</div>
-      </section>
     </main>
 
     <footer class="footer">
-      <div class="ad-slot" id="ad-footer" data-ad-slot="footer">Ad space</div>
       <div class="footer-meta">
         <p>All comparisons happen in your browser.</p>
         <p class="footer-links">

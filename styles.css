@@ -52,9 +52,72 @@ body {
 
 .content {
   display: grid;
-  grid-template-columns: 1fr 1fr 220px;
-  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
   padding: 0 4vw 32px;
+}
+
+.top-row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  gap: 16px;
+  align-items: start;
+}
+
+.actions-shell {
+  min-width: 0;
+}
+
+.ad-top-wrap {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ad-top {
+  width: 100%;
+  min-width: 360px;
+}
+
+.actions-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-bottom: 4px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 10px 22px rgba(17, 24, 39, 0.06);
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.actions-bar .primary,
+.actions-bar .ghost {
+  padding: 12px 20px;
+  min-width: 150px;
+  font-weight: 600;
+}
+
+.actions-bar #compare {
+  min-width: 180px;
+}
+
+.actions-bar .status-card {
+  flex: 0 0 auto;
+  min-width: 270px;
+  max-width: 360px;
+  padding: 14px 18px;
+  min-height: 56px;
 }
 
 .panel {
@@ -63,7 +126,7 @@ body {
   border-radius: 16px;
   padding: 16px;
   box-shadow: 0 12px 25px rgba(17, 24, 39, 0.06);
-  min-height: 360px;
+  min-height: 420px;
   display: flex;
   flex-direction: column;
 }
@@ -97,7 +160,7 @@ body {
 .editor {
   position: relative;
   display: grid;
-  grid-template-columns: 52px 1fr;
+  grid-template-columns: 40px 1fr;
   gap: 0;
   height: 100%;
   min-height: 280px;
@@ -112,7 +175,7 @@ body {
   color: #9ca3af;
   font-family: "JetBrains Mono", "Courier New", monospace;
   font-size: 12px;
-  padding: 12px 8px;
+  padding: 12px 6px;
   text-align: right;
   line-height: 1.5;
   white-space: pre;
@@ -147,6 +210,8 @@ textarea {
   outline: none;
   z-index: 2;
   overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .json-highlight {
@@ -155,10 +220,18 @@ textarea {
   pointer-events: none;
   overflow: hidden;
   color: transparent;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .json-highlight span {
   color: transparent;
+}
+
+textarea::-webkit-scrollbar,
+.json-highlight::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 .json-highlight .diff-added {
@@ -221,23 +294,6 @@ textarea {
   cursor: pointer;
 }
 
-.center-panel {
-  align-items: stretch;
-  gap: 16px;
-}
-
-.compare-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.center-panel .primary,
-.center-panel .ghost {
-  padding: 12px 18px;
-  font-size: 14px;
-}
-
 #sync-toggle {
   background: #e7f0ff;
   border-color: #bfd7ff;
@@ -247,6 +303,17 @@ textarea {
 #sync-toggle:hover {
   border-color: #7aa7ff;
   color: #1e40af;
+}
+
+.actions-bar .ghost {
+  background: #f9fafb;
+  border-color: #e5e7eb;
+  color: #111827;
+}
+
+.actions-bar .ghost:hover {
+  border-color: #9ca3af;
+  color: #111827;
 }
 
 .status-card {
@@ -304,6 +371,8 @@ textarea {
   color: var(--muted);
   background: #fafafa;
   font-size: 13px;
+  position: relative;
+  overflow: hidden;
 }
 
 .ad-slot.tall {
@@ -313,13 +382,26 @@ textarea {
   justify-content: center;
 }
 
+.ad-slot .adsbygoogle {
+  display: block;
+  width: 100%;
+  min-height: 60px;
+}
+
+.ad-placeholder {
+  display: block;
+  width: 100%;
+  text-align: center;
+  color: var(--muted);
+}
+
 .footer {
-  padding: 24px 7vw 32px;
+  padding: 8px 7vw 10px;
   color: var(--muted);
   font-size: 13px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 16px;
 }
 
@@ -347,15 +429,11 @@ textarea {
   .content {
     grid-template-columns: 1fr 1fr;
   }
-
-  .center-panel {
-    grid-column: 1 / -1;
-    flex-direction: row;
+  .top-row {
+    grid-template-columns: 1fr;
   }
-
-  .compare-actions {
-    flex-direction: row;
-    flex-wrap: wrap;
+  .ad-top-wrap {
+    justify-content: flex-start;
   }
 }
 
@@ -367,9 +445,8 @@ textarea {
   .content {
     grid-template-columns: 1fr;
   }
-
-  .center-panel {
-    flex-direction: column;
+  .actions-bar {
+    justify-content: stretch;
   }
 
   .footer {

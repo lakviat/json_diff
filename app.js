@@ -307,7 +307,7 @@ function handleCompare() {
       statusDetails.open = changes.length > 10;
       const preview = changes.slice(0, 20).map((change) => `${change.type.toUpperCase()}: ${change.path}`);
       statusBody.textContent =
-        changes.length > 20
+        changes.length > 10
           ? `${preview.join("\n")}\n...and ${changes.length - 20} more.`
           : preview.join("\n");
     } else {
@@ -484,3 +484,33 @@ syncToggle.addEventListener("click", () => {
 
 syncLineCounts();
 clearHighlights();
+
+function initAdsense() {
+  const adsenseMeta = document.querySelector('meta[name="google-adsense-account"]');
+  if (!adsenseMeta) {
+    return;
+  }
+  const clientId = adsenseMeta.content?.trim();
+  if (!clientId || clientId === "ca-pub-REPLACE_ME") {
+    return;
+  }
+
+  const script = document.createElement("script");
+  script.async = true;
+  script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${clientId}`;
+  script.crossOrigin = "anonymous";
+  document.head.appendChild(script);
+
+  script.onload = () => {
+    document.querySelectorAll(".adsbygoogle").forEach((ad) => {
+      const placeholder = ad.parentElement?.querySelector(".ad-placeholder");
+      if (placeholder) {
+        placeholder.style.display = "none";
+      }
+      // eslint-disable-next-line no-underscore-dangle
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    });
+  };
+}
+
+initAdsense();
