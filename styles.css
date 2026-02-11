@@ -435,6 +435,9 @@ textarea::-webkit-scrollbar,
   .ad-top-wrap {
     justify-content: flex-start;
   }
+  .ad-top {
+    min-width: 100%;
+  }
 }
 
 @media (max-width: 800px) {
@@ -447,6 +450,29 @@ textarea::-webkit-scrollbar,
   }
   .actions-bar {
     justify-content: stretch;
+  }
+
+  .action-buttons {
+    width: 100%;
+  }
+
+  .actions-bar .primary,
+  .actions-bar .ghost {
+    min-width: 100%;
+    width: 100%;
+  }
+
+  .actions-bar #compare {
+    min-width: 100%;
+  }
+
+  .actions-bar .status-card {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .panel {
+    min-height: 320px;
   }
 
   .footer {
