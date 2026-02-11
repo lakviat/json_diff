@@ -51,6 +51,63 @@ const sampleRight = {
 
 const isObject = (value) => value && typeof value === "object" && !Array.isArray(value);
 
+function levenshtein(a, b) {
+  const dp = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
+  for (let i = 0; i <= a.length; i += 1) dp[i][0] = i;
+  for (let j = 0; j <= b.length; j += 1) dp[0][j] = j;
+  for (let i = 1; i <= a.length; i += 1) {
+    for (let j = 1; j <= b.length; j += 1) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost);
+    }
+  }
+  return dp[a.length][b.length];
+}
+
+function similarity(a, b) {
+  if (!a.length && !b.length) return 1;
+  const dist = levenshtein(a, b);
+  const maxLen = Math.max(a.length, b.length) || 1;
+  return 1 - dist / maxLen;
+}
+
+function findRenameMatches(leftKeys, rightKeys, leftObj, rightObj) {
+  const leftOnly = leftKeys.filter((k) => !(k in rightObj));
+  const rightOnly = rightKeys.filter((k) => !(k in leftObj));
+  const usedRight = new Set();
+  const matches = new Map();
+
+  leftOnly.forEach((leftKey) => {
+    let bestKey = null;
+    let bestScore = 0;
+    rightOnly.forEach((rightKey) => {
+      if (usedRight.has(rightKey)) return;
+      const score = similarity(leftKey, rightKey);
+      if (score > bestScore) {
+        bestScore = score;
+        bestKey = rightKey;
+      }
+    });
+    if (bestKey && bestScore >= 0.7) {
+      matches.set(leftKey, bestKey);
+      usedRight.add(bestKey);
+    }
+  });
+
+  return matches;
+}
+
+function replacePrefix(path, fromPrefix, toPrefix) {
+  if (path === fromPrefix) return toPrefix;
+  if (path.startsWith(`${fromPrefix}.`)) {
+    return `${toPrefix}${path.slice(fromPrefix.length)}`;
+  }
+  if (path.startsWith(`${fromPrefix}[`)) {
+    return `${toPrefix}${path.slice(fromPrefix.length)}`;
+  }
+  return path;
+}
+
 function parseJson(input) {
   if (!input.trim()) {
     return { ok: false, error: "JSON is empty." };
@@ -78,8 +135,18 @@ function diffJson(left, right, path = "$") {
       const nextPath = `${path}[${i}]`;
       if (i >= left.length) {
         changes.push({ type: "added", path: nextPath, value: right[i] });
+        collectPaths(right[i], nextPath).forEach((childPath) => {
+          if (childPath !== nextPath) {
+            changes.push({ type: "added", path: childPath, value: right[i] });
+          }
+        });
       } else if (i >= right.length) {
         changes.push({ type: "removed", path: nextPath, value: left[i] });
+        collectPaths(left[i], nextPath).forEach((childPath) => {
+          if (childPath !== nextPath) {
+            changes.push({ type: "removed", path: childPath, value: left[i] });
+          }
+        });
       } else {
         changes.push(...diffJson(left[i], right[i], nextPath));
       }
@@ -88,17 +155,42 @@ function diffJson(left, right, path = "$") {
   }
 
   if (leftIsObj && rightIsObj) {
-    const allKeys = new Set([...Object.keys(left), ...Object.keys(right)]);
-    for (const key of allKeys) {
+    const leftKeys = Object.keys(left);
+    const rightKeys = Object.keys(right);
+    const renameMap = findRenameMatches(leftKeys, rightKeys, left, right);
+    const matchedRight = new Set(renameMap.values());
+
+    leftKeys.forEach((key) => {
       const nextPath = `${path}.${key}`;
-      if (!(key in left)) {
-        changes.push({ type: "added", path: nextPath, value: right[key] });
-      } else if (!(key in right)) {
-        changes.push({ type: "removed", path: nextPath, value: left[key] });
-      } else {
+      if (key in right) {
         changes.push(...diffJson(left[key], right[key], nextPath));
+        return;
       }
-    }
+      if (renameMap.has(key)) {
+        const rightKey = renameMap.get(key);
+        const rightPath = `${path}.${rightKey}`;
+        changes.push({ type: "changed", path: nextPath, value: { left: left[key], right: right[rightKey] } });
+        changes.push({ type: "changed", path: rightPath, value: { left: left[key], right: right[rightKey] } });
+        const innerChanges = diffJson(left[key], right[rightKey], nextPath);
+        changes.push(...innerChanges);
+        changes.push(
+          ...innerChanges.map((change) => ({
+            ...change,
+            path: replacePrefix(change.path, nextPath, rightPath),
+          }))
+        );
+        return;
+      }
+      changes.push({ type: "removed", path: nextPath, value: left[key] });
+    });
+
+    rightKeys.forEach((key) => {
+      if (key in left || matchedRight.has(key)) {
+        return;
+      }
+      const nextPath = `${path}.${key}`;
+      changes.push({ type: "added", path: nextPath, value: right[key] });
+    });
     return changes;
   }
 
