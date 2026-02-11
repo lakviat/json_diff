@@ -55,7 +55,7 @@
         }
       }
     </script>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=BUILD_ID" />
   </head>
   <body>
     <header class="hero">
@@ -69,9 +69,39 @@
     </header>
 
     <main class="content">
+      <section class="about">
+        <div class="about-card">
+          <h2>About JSON Diff</h2>
+          <p>
+            JSON Diff is a free, browser‑based tool that compares two JSON documents and highlights semantic
+            differences line by line. Paste JSON or upload files, then compare instantly—no data leaves your browser.
+          </p>
+          <ul class="about-list">
+            <li>Compare JSON online for free</li>
+            <li>Inline highlights for added, removed, and changed values</li>
+            <li>Works with partial or invalid JSON (plain‑text fallback)</li>
+          </ul>
+        </div>
+        <div class="about-card faq">
+          <h2>FAQ</h2>
+          <div class="faq-item">
+            <h3>Is my data uploaded?</h3>
+            <p>No. All comparison happens locally in your browser.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Can I compare large files?</h3>
+            <p>Yes. Performance depends on your device and browser, but there is no server limit.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Does it support invalid JSON?</h3>
+            <p>Yes. If JSON is incomplete, it falls back to a plain‑text diff.</p>
+          </div>
+        </div>
+      </section>
+
       <section class="top-row">
         <div class="actions-shell">
-      <section class="actions-bar">
+          <section class="actions-bar">
         <div class="action-buttons">
           <button id="sample" class="ghost">Sample</button>
           <button id="sync-toggle" class="ghost">Sync Scroll: Off</button>
@@ -168,6 +198,6 @@
       </div>
     </footer>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=BUILD_ID"></script>
   </body>
 </html>

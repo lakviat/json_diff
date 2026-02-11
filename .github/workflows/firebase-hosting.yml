@@ -17,6 +17,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Inject build version
+        run: |
+          BUILD_ID="$(git rev-parse --short HEAD)"
+          echo "Build ID: ${BUILD_ID}"
+          sed -i.bak "s/BUILD_ID/${BUILD_ID}/g" index.html
+          rm -f index.html.bak
+
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
