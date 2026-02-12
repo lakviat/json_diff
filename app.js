@@ -25,7 +25,7 @@ const downloadRight = document.getElementById("download-right");
 const clearLeft = document.getElementById("clear-left");
 const clearRight = document.getElementById("clear-right");
 
-let syncEnabled = false;
+let syncEnabled = true;
 let isSyncing = false;
 
 const sampleLeft = {
@@ -51,61 +51,70 @@ const sampleRight = {
 
 const isObject = (value) => value && typeof value === "object" && !Array.isArray(value);
 
-function levenshtein(a, b) {
-  const dp = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
-  for (let i = 0; i <= a.length; i += 1) dp[i][0] = i;
-  for (let j = 0; j <= b.length; j += 1) dp[0][j] = j;
-  for (let i = 1; i <= a.length; i += 1) {
-    for (let j = 1; j <= b.length; j += 1) {
-      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-      dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost);
+function repeatString(str, count) {
+  return new Array(count + 1).join(str);
+}
+
+function formatJsonLoose(json) {
+  let newJson = "";
+  let indentLevel = 0;
+  let inString = false;
+
+  for (let i = 0; i < json.length; i += 1) {
+    const currentChar = json.charAt(i);
+    switch (currentChar) {
+      case "{":
+      case "[":
+        if (!inString) {
+          newJson += `${currentChar}\n${repeatString("  ", indentLevel + 1)}`;
+          indentLevel += 1;
+        } else {
+          newJson += currentChar;
+        }
+        break;
+      case "}":
+      case "]":
+        if (!inString) {
+          indentLevel -= 1;
+          newJson += `\n${repeatString("  ", indentLevel)}${currentChar}`;
+        } else {
+          newJson += currentChar;
+        }
+        break;
+      case ",":
+        if (!inString) {
+          newJson += `,\n${repeatString("  ", indentLevel)}`;
+        } else {
+          newJson += currentChar;
+        }
+        break;
+      case ":":
+        if (!inString) {
+          newJson += ": ";
+        } else {
+          newJson += currentChar;
+        }
+        break;
+      case " ":
+      case "\n":
+      case "\t":
+        if (inString) {
+          newJson += currentChar;
+        }
+        break;
+      case '"':
+        if (i > 0 && json.charAt(i - 1) !== "\\") {
+          inString = !inString;
+        }
+        newJson += currentChar;
+        break;
+      default:
+        newJson += currentChar;
+        break;
     }
   }
-  return dp[a.length][b.length];
-}
 
-function similarity(a, b) {
-  if (!a.length && !b.length) return 1;
-  const dist = levenshtein(a, b);
-  const maxLen = Math.max(a.length, b.length) || 1;
-  return 1 - dist / maxLen;
-}
-
-function findRenameMatches(leftKeys, rightKeys, leftObj, rightObj) {
-  const leftOnly = leftKeys.filter((k) => !(k in rightObj));
-  const rightOnly = rightKeys.filter((k) => !(k in leftObj));
-  const usedRight = new Set();
-  const matches = new Map();
-
-  leftOnly.forEach((leftKey) => {
-    let bestKey = null;
-    let bestScore = 0;
-    rightOnly.forEach((rightKey) => {
-      if (usedRight.has(rightKey)) return;
-      const score = similarity(leftKey, rightKey);
-      if (score > bestScore) {
-        bestScore = score;
-        bestKey = rightKey;
-      }
-    });
-    if (bestKey && bestScore >= 0.7) {
-      matches.set(leftKey, bestKey);
-      usedRight.add(bestKey);
-    }
-  });
-
-  return matches;
-}
-
-function replacePrefix(path, fromPrefix, toPrefix) {
-  if (path === fromPrefix) return toPrefix;
-  if (path.startsWith(`${fromPrefix}.`)) {
-    return `${toPrefix}${path.slice(fromPrefix.length)}`;
-  }
-  if (path.startsWith(`${fromPrefix}[`)) {
-    return `${toPrefix}${path.slice(fromPrefix.length)}`;
-  }
-  return path;
+  return newJson;
 }
 
 function parseJson(input) {
@@ -126,27 +135,14 @@ function diffJson(left, right, path = "$") {
     return changes;
   }
 
-  const leftIsObj = isObject(left);
-  const rightIsObj = isObject(right);
-
   if (Array.isArray(left) && Array.isArray(right)) {
     const maxLength = Math.max(left.length, right.length);
     for (let i = 0; i < maxLength; i += 1) {
       const nextPath = `${path}[${i}]`;
       if (i >= left.length) {
         changes.push({ type: "added", path: nextPath, value: right[i] });
-        collectPaths(right[i], nextPath).forEach((childPath) => {
-          if (childPath !== nextPath) {
-            changes.push({ type: "added", path: childPath, value: right[i] });
-          }
-        });
       } else if (i >= right.length) {
         changes.push({ type: "removed", path: nextPath, value: left[i] });
-        collectPaths(left[i], nextPath).forEach((childPath) => {
-          if (childPath !== nextPath) {
-            changes.push({ type: "removed", path: childPath, value: left[i] });
-          }
-        });
       } else {
         changes.push(...diffJson(left[i], right[i], nextPath));
       }
@@ -154,42 +150,23 @@ function diffJson(left, right, path = "$") {
     return changes;
   }
 
-  if (leftIsObj && rightIsObj) {
+  if (isObject(left) && isObject(right)) {
     const leftKeys = Object.keys(left);
     const rightKeys = Object.keys(right);
-    const renameMap = findRenameMatches(leftKeys, rightKeys, left, right);
-    const matchedRight = new Set(renameMap.values());
-
     leftKeys.forEach((key) => {
       const nextPath = `${path}.${key}`;
       if (key in right) {
         changes.push(...diffJson(left[key], right[key], nextPath));
-        return;
+      } else {
+        changes.push({ type: "removed", path: nextPath, value: left[key] });
       }
-      if (renameMap.has(key)) {
-        const rightKey = renameMap.get(key);
-        const rightPath = `${path}.${rightKey}`;
-        changes.push({ type: "changed", path: nextPath, value: { left: left[key], right: right[rightKey] } });
-        changes.push({ type: "changed", path: rightPath, value: { left: left[key], right: right[rightKey] } });
-        const innerChanges = diffJson(left[key], right[rightKey], nextPath);
-        changes.push(...innerChanges);
-        changes.push(
-          ...innerChanges.map((change) => ({
-            ...change,
-            path: replacePrefix(change.path, nextPath, rightPath),
-          }))
-        );
-        return;
-      }
-      changes.push({ type: "removed", path: nextPath, value: left[key] });
     });
 
     rightKeys.forEach((key) => {
-      if (key in left || matchedRight.has(key)) {
-        return;
+      if (!(key in left)) {
+        const nextPath = `${path}.${key}`;
+        changes.push({ type: "added", path: nextPath, value: right[key] });
       }
-      const nextPath = `${path}.${key}`;
-      changes.push({ type: "added", path: nextPath, value: right[key] });
     });
     return changes;
   }
@@ -248,11 +225,18 @@ function highlightTypeFor(path, side, { added, removed, changed }) {
 function renderJsonLines(value, highlightMap, side) {
   const lines = [];
 
+  function highlightFor(path, allow) {
+    if (!allow) {
+      return "";
+    }
+    return highlightTypeFor(path, side, highlightMap);
+  }
+
   function walk(node, path, depth, isLast) {
     const indent = "  ".repeat(depth);
 
     if (Array.isArray(node)) {
-      lines.push({ text: `${indent}[`, path, type: highlightTypeFor(path, side, highlightMap) });
+      lines.push({ text: `${indent}[`, path, type: highlightFor(path, highlightMap.added.has(path) || highlightMap.removed.has(path) || highlightMap.changed.has(path)) });
       node.forEach((item, index) => {
         const nextPath = `${path}[${index}]`;
         const lastItem = index === node.length - 1;
@@ -261,13 +245,17 @@ function renderJsonLines(value, highlightMap, side) {
       lines.push({
         text: `${indent}]${isLast ? "" : ","}`,
         path,
-        type: highlightTypeFor(path, side, highlightMap),
+        type: "",
       });
       return;
     }
 
     if (isObject(node)) {
-      lines.push({ text: `${indent}{`, path, type: highlightTypeFor(path, side, highlightMap) });
+      lines.push({
+        text: `${indent}{`,
+        path,
+        type: highlightFor(path, highlightMap.added.has(path) || highlightMap.removed.has(path) || highlightMap.changed.has(path)),
+      });
       const keys = Object.keys(node);
       keys.forEach((key, index) => {
         const nextPath = `${path}.${key}`;
@@ -279,27 +267,27 @@ function renderJsonLines(value, highlightMap, side) {
           lines.push({
             text: prefix + (Array.isArray(value) ? "[" : "{"),
             path: nextPath,
-            type: highlightTypeFor(nextPath, side, highlightMap),
+            type: highlightFor(nextPath, true),
           });
           walk(value, nextPath, depth + 2, true);
           lines.push({
             text: `${indent}  ${Array.isArray(value) ? "]" : "}"}${lastItem ? "" : ","}`,
             path: nextPath,
-            type: highlightTypeFor(nextPath, side, highlightMap),
+            type: "",
           });
         } else {
           const valueText = JSON.stringify(value);
           lines.push({
             text: `${prefix}${valueText}${lastItem ? "" : ","}`,
             path: nextPath,
-            type: highlightTypeFor(nextPath, side, highlightMap),
+            type: highlightFor(nextPath, true),
           });
         }
       });
       lines.push({
         text: `${indent}}${isLast ? "" : ","}`,
         path,
-        type: highlightTypeFor(path, side, highlightMap),
+        type: "",
       });
       return;
     }
@@ -307,7 +295,7 @@ function renderJsonLines(value, highlightMap, side) {
     lines.push({
       text: `${indent}${JSON.stringify(node)}${isLast ? "" : ","}`,
       path,
-      type: highlightTypeFor(path, side, highlightMap),
+      type: highlightFor(path, true),
     });
   }
 
@@ -394,19 +382,12 @@ function handleCompare() {
 
     if (changes.length) {
       compareStatus.className = "status-card warn";
-      statusTitle.textContent = `${changes.length} difference(s) highlighted.`;
-      statusDetails.style.display = "block";
-      statusDetails.open = changes.length > 10;
-      const preview = changes.slice(0, 20).map((change) => `${change.type.toUpperCase()}: ${change.path}`);
-      statusBody.textContent =
-        changes.length > 10
-          ? `${preview.join("\n")}\n...and ${changes.length - 20} more.`
-          : preview.join("\n");
+      statusTitle.textContent = "JSON files have differences.";
     } else {
       compareStatus.className = "status-card success";
       statusTitle.textContent = "No differences found. The two files match.";
-      statusDetails.style.display = "none";
     }
+    statusDetails.style.display = "none";
     return;
   }
 
@@ -423,8 +404,7 @@ function handleCompare() {
 
   compareStatus.className = "status-card warn";
   statusTitle.textContent = "Compared as plain text.";
-  statusDetails.style.display = "block";
-  statusDetails.open = true;
+  statusDetails.style.display = "none";
   statusBody.textContent = errors || "One or both documents are not valid JSON yet.";
 }
 
@@ -432,11 +412,15 @@ function handleFormat() {
   const leftParsed = parseJson(leftTextarea.value);
   if (leftParsed.ok) {
     leftTextarea.value = JSON.stringify(leftParsed.value, null, 2);
+  } else if (leftTextarea.value.trim()) {
+    leftTextarea.value = formatJsonLoose(leftTextarea.value);
   }
 
   const rightParsed = parseJson(rightTextarea.value);
   if (rightParsed.ok) {
     rightTextarea.value = JSON.stringify(rightParsed.value, null, 2);
+  } else if (rightTextarea.value.trim()) {
+    rightTextarea.value = formatJsonLoose(rightTextarea.value);
   }
 
   syncLineCounts();
@@ -574,6 +558,7 @@ syncToggle.addEventListener("click", () => {
   syncToggle.textContent = `Sync Scroll: ${syncEnabled ? "On" : "Off"}`;
 });
 
+syncToggle.textContent = `Sync Scroll: ${syncEnabled ? "On" : "Off"}`;
 syncLineCounts();
 clearHighlights();
 
