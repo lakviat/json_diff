@@ -6,6 +6,19 @@
       "**/.*",
       "**/node_modules/**"
     ],
+    "redirects": [
+      {
+        "source": "/:path*",
+        "destination": "https://www.jsondiff.info/:path*",
+        "type": 301,
+        "has": [
+          {
+            "type": "host",
+            "value": "jsondiff.info"
+          }
+        ]
+      }
+    ],
     "headers": [
       {
         "source": "/index.html",
