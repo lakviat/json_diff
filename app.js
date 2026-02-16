@@ -28,6 +28,15 @@ const clearRight = document.getElementById("clear-right");
 let syncEnabled = true;
 let isSyncing = false;
 
+function enforceWww() {
+  if (window.location.hostname === "jsondiff.info") {
+    const target = `https://www.jsondiff.info${window.location.pathname}${window.location.search}${window.location.hash}`;
+    window.location.replace(target);
+  }
+}
+
+enforceWww();
+
 const sampleLeft = {
   user: {
     id: 12,
