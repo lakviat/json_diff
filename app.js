@@ -412,7 +412,7 @@ function handleCompare() {
   const errors = [leftStatus, rightStatus].filter(Boolean).join(" | ");
 
   compareStatus.className = "status-card warn";
-  statusTitle.textContent = "Compared as plain text.";
+  statusTitle.textContent = "JSON structure mismatch. Compared as plain text.";
   statusDetails.style.display = "none";
   statusBody.textContent = errors || "One or both documents are not valid JSON yet.";
 }
@@ -570,33 +570,3 @@ syncToggle.addEventListener("click", () => {
 syncToggle.textContent = `Sync Scroll: ${syncEnabled ? "On" : "Off"}`;
 syncLineCounts();
 clearHighlights();
-
-function initAdsense() {
-  const adsenseMeta = document.querySelector('meta[name="google-adsense-account"]');
-  if (!adsenseMeta) {
-    return;
-  }
-  const clientId = adsenseMeta.content?.trim();
-  if (!clientId || clientId === "ca-pub-REPLACE_ME") {
-    return;
-  }
-
-  const script = document.createElement("script");
-  script.async = true;
-  script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${clientId}`;
-  script.crossOrigin = "anonymous";
-  document.head.appendChild(script);
-
-  script.onload = () => {
-    document.querySelectorAll(".adsbygoogle").forEach((ad) => {
-      const placeholder = ad.parentElement?.querySelector(".ad-placeholder");
-      if (placeholder) {
-        placeholder.style.display = "none";
-      }
-      // eslint-disable-next-line no-underscore-dangle
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    });
-  };
-}
-
-initAdsense();

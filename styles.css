@@ -70,14 +70,51 @@ body {
   min-width: 0;
 }
 
-.ad-top-wrap {
+.faq-top-wrap {
   display: flex;
   justify-content: flex-end;
 }
 
-.ad-top {
+.faq-top {
   width: 100%;
   min-width: 360px;
+  height: 88px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 8px 10px;
+  box-shadow: 0 8px 18px rgba(17, 24, 39, 0.05);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.faq-lead {
+  margin: 0 0 4px;
+  font-size: 11.5px;
+  line-height: 1.2;
+  color: var(--muted);
+}
+
+.faq-top h2 {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-family: var(--font-display);
+}
+
+.faq-list {
+  margin: 0;
+  padding-left: 14px;
+  font-size: 10.8px;
+  line-height: 1.2;
+  color: #374151;
+}
+
+.faq-list li {
+  margin: 0 0 3px;
+}
+
+.faq-list li:last-child {
+  margin-bottom: 0;
 }
 
 .actions-bar {
@@ -115,10 +152,10 @@ body {
 
 .actions-bar .status-card {
   flex: 0 0 auto;
-  min-width: 270px;
-  max-width: 360px;
-  padding: 14px 18px;
-  min-height: 56px;
+  min-width: 180px;
+  max-width: 260px;
+  padding: 12px 16px;
+  min-height: 48px;
 }
 
 .panel {
@@ -364,38 +401,6 @@ textarea::-webkit-scrollbar,
   white-space: pre-wrap;
 }
 
-.ad-slot {
-  border: 1px dashed var(--line);
-  border-radius: 12px;
-  padding: 12px;
-  text-align: center;
-  color: var(--muted);
-  background: #fafafa;
-  font-size: 13px;
-  position: relative;
-  overflow: hidden;
-}
-
-.ad-slot.tall {
-  min-height: 220px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.ad-slot .adsbygoogle {
-  display: block;
-  width: 100%;
-  min-height: 60px;
-}
-
-.ad-placeholder {
-  display: block;
-  width: 100%;
-  text-align: center;
-  color: var(--muted);
-}
-
 .footer {
   padding: 8px 7vw 10px;
   color: var(--muted);
@@ -433,55 +438,38 @@ textarea::-webkit-scrollbar,
   .top-row {
     grid-template-columns: 1fr;
   }
-  .ad-top-wrap {
+  .faq-top-wrap {
     justify-content: flex-start;
   }
-  .ad-top {
+  .faq-top {
     min-width: 100%;
   }
 }
 
 @media (max-width: 800px) {
-  .hero {
-    flex-direction: column;
+  body {
+    overflow-x: auto;
+  }
+
+  .hero,
+  .content,
+  .footer {
+    min-width: 1100px;
   }
 
   .content {
-    grid-template-columns: 1fr;
-  }
-  .actions-bar {
-    justify-content: stretch;
+    grid-template-columns: 1fr 1fr;
   }
 
-  .action-buttons {
-    width: 100%;
+  .top-row {
+    grid-template-columns: minmax(0, 1fr) 420px;
   }
 
-  .actions-bar .primary,
-  .actions-bar .ghost {
-    min-width: 100%;
-    width: 100%;
+  .faq-top-wrap {
+    justify-content: flex-end;
   }
 
-  .actions-bar #compare {
-    min-width: 100%;
-  }
-
-  .actions-bar .status-card {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .panel {
-    min-height: 320px;
-  }
-
-  .footer {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .footer-meta {
-    text-align: left;
+  .faq-top {
+    min-width: 360px;
   }
 }

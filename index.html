@@ -39,20 +39,65 @@
       gtag("js", new Date());
       gtag("config", "G-7QRF628W0J");
     </script>
-    <meta name="google-adsense-account" content="ca-pub-REPLACE_ME" />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "JSON Diff",
-        "url": "https://www.jsondiff.info/",
-        "description": "Compare two JSON documents online for free. Paste or upload JSON files and see differences instantly.",
-        "publisher": {
-          "@type": "Person",
-          "name": "Nurlan Mirovich",
-          "url": "https://github.com/lakviat"
-        }
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "JSON Diff",
+            "url": "https://www.jsondiff.info/",
+            "description": "Compare two JSON documents online for free. Paste or upload JSON files and see differences instantly.",
+            "publisher": {
+              "@type": "Person",
+              "name": "Nurlan Mirovich",
+              "url": "https://github.com/lakviat"
+            }
+          },
+          {
+            "@type": "WebApplication",
+            "name": "JSON Diff",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Any",
+            "url": "https://www.jsondiff.info/",
+            "description": "Online JSON diff tool to compare, format, and validate JSON in your browser.",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "How do I compare two JSON files?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Paste JSON into the left and right editors or upload files, then click Compare to see semantic differences."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Does JSON Diff send data to a server?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. Comparisons run in your browser."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I format JSON before comparing?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Use the Format button to prettify valid JSON before running Compare."
+                }
+              }
+            ]
+          }
+        ]
       }
     </script>
     <link rel="preload" href="styles.css?v=BUILD_ID" as="style" />
@@ -64,9 +109,6 @@
       <div class="brand">
         <h1>JSON Diff</h1>
         <p class="tagline">Compare two JSON documents and see semantic differences.</p>
-      </div>
-      <div class="hero-note">
-        <p>Validate, format, and compare two JSON documents. Differences are shown inline.</p>
       </div>
     </header>
 
@@ -89,18 +131,17 @@
         </div>
       </section>
         </div>
-        <div class="ad-top-wrap">
-          <div class="ad-slot ad-top" id="ad-top" data-ad-slot="top">
-            <ins
-              class="adsbygoogle"
-              data-ad-client="ca-pub-REPLACE_ME"
-              data-ad-slot="REPLACE_TOP_SLOT"
-              data-ad-format="auto"
-              data-full-width-responsive="true"
-            ></ins>
-            <span class="ad-placeholder">Ad space</span>
-          </div>
-        </div>
+        <aside class="faq-top-wrap" aria-label="Frequently asked questions">
+          <section class="faq-top">
+            <p class="faq-lead">Validate, format, and compare two JSON documents. Differences are shown inline.</p>
+            <h2>FAQ</h2>
+            <ul class="faq-list">
+              <li><strong>How do I compare two JSON files?</strong> Paste JSON in both editors or upload files, then click Compare.</li>
+              <li><strong>Is this JSON diff tool free?</strong> Yes, the tool is free to use.</li>
+              <li><strong>Does this upload my JSON data?</strong> No, comparisons run locally in your browser.</li>
+            </ul>
+          </section>
+        </aside>
       </section>
 
       <section class="panel">
