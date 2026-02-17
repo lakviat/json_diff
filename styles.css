@@ -433,43 +433,70 @@ textarea::-webkit-scrollbar,
 
 @media (max-width: 1100px) {
   .content {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
+
   .top-row {
     grid-template-columns: 1fr;
   }
+
   .faq-top-wrap {
     justify-content: flex-start;
   }
+
   .faq-top {
+    width: 100%;
     min-width: 100%;
   }
 }
 
 @media (max-width: 800px) {
-  body {
-    overflow-x: auto;
-  }
-
-  .hero,
-  .content,
-  .footer {
-    min-width: 1100px;
+  .hero {
+    flex-direction: column;
   }
 
   .content {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
 
-  .top-row {
-    grid-template-columns: minmax(0, 1fr) 420px;
+  .actions-bar {
+    justify-content: stretch;
   }
 
-  .faq-top-wrap {
-    justify-content: flex-end;
+  .action-buttons {
+    width: 100%;
+  }
+
+  .actions-bar .primary,
+  .actions-bar .ghost {
+    min-width: 100%;
+    width: 100%;
+  }
+
+  .actions-bar #compare {
+    min-width: 100%;
+  }
+
+  .actions-bar .status-card {
+    width: 100%;
+    max-width: 100%;
   }
 
   .faq-top {
-    min-width: 360px;
+    height: auto;
+    max-height: 180px;
+  }
+
+  .panel {
+    min-height: 320px;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer-meta {
+    text-align: left;
   }
 }
