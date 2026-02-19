@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">JSON Diff</title>
+  <desc id="desc">Compare two JSON documents online for free.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f5f2ee" />
+      <stop offset="100%" stop-color="#f9fafb" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect x="80" y="110" width="1040" height="410" rx="24" fill="#ffffff" stroke="#e5e7eb" stroke-width="2" />
+  <text x="130" y="240" font-family="Segoe UI, Arial, sans-serif" font-size="88" font-weight="700" fill="#111827">JSON Diff</text>
+  <text x="130" y="305" font-family="Segoe UI, Arial, sans-serif" font-size="34" fill="#4b5563">Compare two JSON documents online</text>
+  <rect x="130" y="365" width="220" height="64" rx="12" fill="#0f766e" />
+  <text x="240" y="408" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="700" fill="#ffffff">Compare</text>
+  <text x="130" y="470" font-family="Segoe UI, Arial, sans-serif" font-size="28" fill="#6b7280">www.jsondiff.info</text>
+</svg>

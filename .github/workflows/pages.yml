@@ -30,7 +30,7 @@ jobs:
       - name: Prepare site files
         run: |
           mkdir -p dist
-          cp index.html app.js styles.css favicon.svg robots.txt sitemap.xml CNAME ads.txt .nojekyll dist/
+          cp index.html app.js styles.css favicon.svg social-preview.svg robots.txt sitemap.xml CNAME ads.txt .nojekyll indexnow-52df6f7098aa4d2188df76e6f0f6a35a.txt BingSiteAuth.xml dist/
           BUILD_ID="${GITHUB_SHA::12}"
           sed -i "s/BUILD_ID/${BUILD_ID}/g" dist/index.html
 
@@ -42,3 +42,9 @@ jobs:
       - name: Deploy
         id: deploy
         uses: actions/deploy-pages@v4
+
+      - name: Notify IndexNow
+        run: |
+          KEY="52df6f7098aa4d2188df76e6f0f6a35a"
+          curl -fsS "https://api.indexnow.org/indexnow?url=https://www.jsondiff.info/&key=${KEY}" || true
+          curl -fsS "https://api.indexnow.org/indexnow?url=https://www.jsondiff.info/sitemap.xml&key=${KEY}" || true
